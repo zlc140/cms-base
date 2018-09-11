@@ -12,6 +12,11 @@ import directive from '@directive'
 // 扩展 组件
 import components from '@components'
 
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+
+Vue.use(VueMaterial);
 
 // 使用service插件
 Vue.use(Service);
@@ -23,7 +28,6 @@ Vue.use(filters);
 Vue.use(directive);
 // 使用扩展组件
 Vue.use(components);
-
 
 Vue.config.productionTip = false
 

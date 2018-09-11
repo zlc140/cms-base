@@ -23,6 +23,7 @@ const exportConfig = {
 			.set('@plugins', resolve('src/extend/plugins'))
 			.set('@utils', resolve('src/utils'))
 			.set('@assets', resolve('src/assets'))
+			.set('@img', resolve('src/assets/img'))
 			.set('@app', resolve('src/app'))
 			.set('@comm', resolve('src/comm'))
 	}
@@ -60,9 +61,12 @@ if (process.env.NODE_ENV === 'development') {
 			proxy: require('./proxy'),
 			quiet: true, // necessary for FriendlyErrorsPlugin
 			watchOptions: {
-				poll: false,
+				poll: true,
 			}
 		},
+		configureWebpack: config => {
+			config.devtool = 'source-map'
+		}
 	})
 	
 }

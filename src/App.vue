@@ -1,26 +1,40 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div id="app">
+        <router-view/>
     </div>
-    <router-view/>
-  </div>
 </template>
 
-<style>
+<script>
+	export default {
+		name: 'App',
+		data() {
+
+			return {}
+		}
+	}
+</script>
+
+<style scoped>
     #app {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
         color: #2c3e50;
-        margin-top: 60px;
+        text-align: center;
+        height: 100%;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
     }
 </style>
 
 <style lang="scss">
-    body {
+    html, body {
+        width: 100%;
+        height: 100%;
         background-color: white;
     }
+    ul{
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
 </style>
