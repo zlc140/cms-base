@@ -8,7 +8,7 @@
             </div>
             <div class="header-menu">
                 <ul>
-                    <li>
+                    <li class="focus">
                         <a><i class="cms cms-mubiaoyemianliebiao"></i>页面列表</a>
                     </li>
                     <li>
@@ -29,22 +29,13 @@
                 </ul>
             </div>
         </div>
-        <div class="home-body">
-            <div class="home-search">
-
-            </div>
-            <div class="home-main">
-                <div class="home-view-content">
-                    <router-view/>
-                </div>
-            </div>
-        </div>
+        <router-view/>
     </div>
 </template>
 
 <script>
 	export default {
-		name: 'layout'
+		name: 'layout',
 	}
 </script>
 
@@ -53,6 +44,7 @@
     .home-container {
         width: 100%;
         height: 100%;
+        font-family: PingFang-SC-Regular;
     }
 
     .home-header {
@@ -68,7 +60,7 @@
 
     .header-logo {
         display: flex;
-        width: 450px;
+        width: 400px;
         align-items: center;
         padding-left: 50px;
         img {
@@ -104,14 +96,14 @@
         }
         li {
             padding: 0 15px;
-            &:hover, &:active {
+            &:hover, &:active, &.focus {
                 a {
                     color: white;
                     border-bottom-color: #d81e39;
                 }
             }
             &:last-child i.cms {
-                font-size: 24px;
+                font-size: 20px;
             }
         }
     }
@@ -122,25 +114,27 @@
         height: 100%;
         justify-content: flex-end;
         ul, li {
-            color: #fffefe;
             height: 100%;
             display: flex;
             align-items: center;
         }
         ul {
-            padding-right: 15px;
+            padding-right: 10px;
         }
-        li{
-            padding: 0 10px;
+        li {
+            color: #d8dee8;
+            padding: 0 8px;
+            font-size: 13px;
+            cursor: pointer;
         }
-        i.cms{
+        i.cms {
             font-size: 22px;
             font-weight: 500;
             padding-right: 5px;
         }
     }
 
-    .home-body {
+    .home-container >>> .home-body {
         height: 100%;
         width: 100%;
         display: flex;
@@ -148,18 +142,4 @@
         padding-top: $header-height;
     }
 
-    .home-search {
-        height: 100%;
-        width: 300px;
-        background-color: gray;
-    }
-
-    .home-main {
-        height: 100%;
-        flex-grow: 1;
-        > div {
-            height: 100%;
-            width: 100%;
-        }
-    }
 </style>

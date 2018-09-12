@@ -2,12 +2,10 @@
 const RouterRules = [
 	{
 		cache: false,
-		isMenu: false,
 		path: '/',
-		redirect: '/home/',
+		redirect: '/draw/index',
 	},
 	{
-		isMenu: false,
 		path: '/home',
 		sourcePath: 'home/layout',
 		children: [
@@ -16,9 +14,14 @@ const RouterRules = [
 				cache: false,
 				title: '页面列表',
 				path: '/',
-				sourcePath: 'home/Home',
+				sourcePath: 'home/index',
 			},
 		]
+	},
+	{
+		path: '/draw/:module',
+		title: '自定义绘制',
+		sourcePath: 'draw/index',
 	},
 	// 其他页面重定向
 	{
