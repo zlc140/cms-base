@@ -79,17 +79,10 @@
             <!-- 组件导航 -->
             <div class="body-nav">
                 <ul>
-                    <li>
-                        <i class="cms cms-creative"></i>
-                        <span>创意模板</span>
-                    </li>
-                    <li class="focus">
-                        <i class="cms cms-zujian"></i>
-                        <span>组件</span>
-                    </li>
-                    <li>
-                        <i class="cms cms-zujian1"></i>
-                        <span>元件</span>
+                    <li v-for="(compItem,index) in compToolsData" :class="{focus:index === selectCompIndexModule}"
+                        @click="()=>{selectCompModule(compItem)}">
+                        <i class="cms" :class="compItem.icon"></i>
+                        <span>{{compItem.name}}</span>
                     </li>
                 </ul>
             </div>
@@ -102,31 +95,22 @@
                             suffix-icon="el-icon-search">
                     </el-input>
                 </div>
-
-                <div class="module-class-toggle">
-                    <div class="toggle-tabs-title">
-                        <ul>
-                            <li>
-                                <span>全部</span>
-                            </li>
-                            <li class="focus">
-                                <span>轮播</span>
-                            </li>
-                            <li>
-                                <span>icon</span>
-                            </li>
-                            <li>
-                                <span>营销</span>
-                            </li>
-                            <li>
-                                <span>主题</span>
+                <tabs class="module-class-toggle" :value="selectCompItemIndex">
+                    <tab-pane :label="item.title" :name="selectCompIndexModule+'_'+index"
+                              v-for="(item,index) in selectCompToolsData"
+                              :key="selectCompIndexModule+'_'+index">
+                        <ul class="module-list">
+                            <li v-for="compInfo in item.compList">
+                                <div class="drop-origin">
+                                    <cms-custom :struct="compInfo"></cms-custom>
+                                    <div>
+                                        <span>{{compInfo.name}}</span>
+                                    </div>
+                                </div>
                             </li>
                         </ul>
-                    </div>
-                    <div class="toggle-tabs-content">
-
-                    </div>
-                </div>
+                    </tab-pane>
+                </tabs>
             </div>
             <!-- 绘制视口 -->
             <div class="body-view">
@@ -163,7 +147,7 @@
                 </div>
                 <!-- 选择绘制组件的属性切换容器 -->
                 <div class="attributes-tab-toggle">
-                    <el-tabs :stretch="false" type="border-card" @tab-click="()=>{}">
+                    <el-tabs :stretch="false" type="border-card" @tab-click="()=>{}" value="first">
                         <el-tab-pane label="组件设置" name="first">
                             组件设置
                         </el-tab-pane>
@@ -178,13 +162,30 @@
 </template>
 
 <script>
+	// 左侧组件tab选择
+	import tabs from './_comp/tabs';
+	import tabPane from './_comp/tab-pane';
+
+	// 自定义组件（万能组件^_^）
+	import cmsCustom from './_comp/cms-custom'
+
+	// 组件工具数据
+	import {mixin as compToolsDataMixin} from './_store/compToolsData'
+
 	export default {
 		name: 'index',
+		mixins: [compToolsDataMixin],
+		components: {
+			tabs,
+			tabPane,
+			cmsCustom
+		},
 		data() {
 			return {
 				moduleClass: 'first'
 			}
-		}
+		},
+
 	}
 </script>
 
@@ -231,10 +232,16 @@
         }
     }
 
-    @mixin inner-icon($color) {
+    @mixin inner-icon($color,$textColor) {
         .inner-icon-vertical {
             &:not(:hover) {
-                color: $color;
+                i {
+                    color: $color;
+                }
+                span {
+                    color: $textColor;
+                }
+
             }
             i.cms {
                 &, & + span {
@@ -256,7 +263,7 @@
 
     .header-active {
         width: 150px;
-        @include inner-icon(#494949);
+        @include inner-icon(#494949, #494949);
     }
 
     .header-module, .header-scaling {
@@ -270,7 +277,7 @@
             padding-left: 5px;
             padding-right: 5px;
         }
-        @include inner-icon(#828282);
+        @include inner-icon(rgba(0, 0, 0, 0.87), #828282);
     }
 
     .header-module {
@@ -303,6 +310,7 @@
 
     .body-nav {
         width: 60px;
+        user-select: none;
         border-right: solid 1px $container-border-color;
         li {
             height: 60px;
@@ -346,38 +354,48 @@
     }
 
     .body-module {
-        width: 250px;
+        width: 300px;
+        height: 100%;
+        position: relative;
         border-right: solid 1px $container-border-color;
+        &:after {
+            top: 0;
+            right: -3px;
+            width: 6px;
+            height: 100%;
+            content: '';
+            z-index: 2;
+            position: absolute;
+            /*cursor: col-resize;*/
+            border-right: solid 1px transparent;
+        }
     }
 
     .module-class-toggle {
 
     }
 
-    .toggle-tabs-title {
-        ul {
-            display: flex;
-            flex-wrap: wrap;
-        }
+    .module-list {
+        display: flex;
+        flex-wrap: wrap;
         li {
-            width: (100% / 3);
-            cursor: pointer;
-            padding-bottom: 5px;
-            &.focus {
-                span {
-                    color: #409EFF;
-                    border-bottom-color: #409EFF;
-                }
-            }
+            width: 50%;
+            padding: 2px 5px;
         }
-        span {
-            height: 100%;
-            font-size: 14px;
-            padding-left: 3px;
-            padding-right: 3px;
-            padding-bottom: 5px;
-            display: inline-block;
-            border-bottom: solid 1.5px transparent;
+        .drop-origin {
+            width: 100%;
+            cursor: pointer;
+            &.move{
+                cursor: move;
+            }
+            >div{
+                color: gray;
+                font-size: 13px;
+            }
+            & >>> *{
+                pointer-events: none;
+            }
+
         }
     }
 
@@ -426,7 +444,7 @@
     }
 
     .body-attributes {
-        width: 250px;
+        width: 300px;
         position: relative;
         border-right: solid 1px $container-border-color;
     }
