@@ -1,24 +1,18 @@
 <script>
 
-    // 表单元素结构数据
-    import formAtom from '../_store/baseStruct/formAtom'
+	// 表单元素结构数据
+	import {getCompStruct} from '../_store/baseStruct';
 
 	function render(h, struct) {
-    	// 检查是否已定义好的组件
-		const atomId= struct.atomId;
-        const atomType=struct.atomType;
+		// 检查是否已定义好的组件
+		struct=getCompStruct(struct)
 
-        if(atomId && atomType){
-
-        }
-
-
-		const data = Object.keys(struct.data||{}).reduce(function (data, key) {
+		const data = Object.keys(struct.data || {}).reduce(function (data, key) {
 			data[key] = struct.data[key];
 			return data;
 		}, {})
 
-		return h(struct.tag, data||{},(struct.child || []).filter(struct => struct.tag).map(function (struct) {
+		return h(struct.tag, JSON.parse(JSON.stringify(data)) || {}, (struct.child || struct.children || []).filter(struct => struct.tag).map(function (struct) {
 			return render(h, struct)
 		}))
 	}
@@ -36,7 +30,7 @@
 </script>
 
 <style lang="scss" scoped>
-    *{
+    * {
         max-width: 100%;
     }
 </style>

@@ -96,17 +96,24 @@
                     </el-input>
                 </div>
                 <tabs class="module-class-toggle" :value="selectCompItemIndex">
-                    <tab-pane :label="item.title" :name="selectCompIndexModule+'_'+index"
+                    <tab-pane :label="item.title+'('+item.compList.length+')'" :name="selectCompIndexModule+'_'+index"
                               v-for="(item,index) in selectCompToolsData"
                               :key="selectCompIndexModule+'_'+index">
+                        <!-- 组件工具箱 -->
                         <ul class="module-list">
                             <li v-for="compInfo in item.compList">
-                                <div class="drop-origin">
-                                    <cms-custom :struct="compInfo"></cms-custom>
+                                <draggable element="div" @move="moveDrop" @end="viewCompAddEnd($event,compInfo)"
+                                           @update="()=>{}"
+                                           :options="toolsDropOption"
+                                           class="drop-origin">
+                                    <div class="drop-atom">
+                                        <!-- 自定义组件 -->
+                                        <cms-custom :struct="compInfo"></cms-custom>
+                                    </div>
                                     <div>
                                         <span>{{compInfo.name}}</span>
                                     </div>
-                                </div>
+                                </draggable>
                             </li>
                         </ul>
                     </tab-pane>
@@ -116,9 +123,12 @@
             <div class="body-view">
                 <div class="view-container">
                     <!-- 绘制区域 -->
-                    <div class="view-draw-zone">
-
-                    </div>
+                    <draggable class="view-draw-zone" element="div"
+                               :options="viewDropOption"
+                               @add="viewCompAdd"
+                               @choose="viewCompChoose">
+                        <div class="drop-atom"></div>
+                    </draggable>
                 </div>
             </div>
             <!-- 绘制控制区 -->
@@ -137,6 +147,13 @@
                         <i class="cms cms-yinyue"></i>
                     </li>
                 </ul>
+                <!-- 组件回收站 -->
+                <draggable class="move-comp-action" element="div" @add="removeDrop_Add"
+                           :options="removeDropOption">
+                    <div class="drop-atom no-drop">
+                        <i class="cms cms-remove1"></i>
+                    </div>
+                </draggable>
             </div>
             <!-- 组件属性设置 -->
             <div class="body-attributes">
@@ -166,19 +183,29 @@
 	import tabs from './_comp/tabs';
 	import tabPane from './_comp/tab-pane';
 
+	// 拖拉拽组件
+	import draggable from 'vuedraggable'
+
 	// 自定义组件（万能组件^_^）
 	import cmsCustom from './_comp/cms-custom'
 
 	// 组件工具数据
 	import {mixin as compToolsDataMixin} from './_store/compToolsData'
 
+	// 绘制区域组件数据及接口
+	import {mixin as drawViewDataMixin} from './_store/drawViewData'
+
+	// 拖拽组件选项及配置
+	import dropMixin from './_store/dropOption'
+
 	export default {
 		name: 'index',
-		mixins: [compToolsDataMixin],
+		mixins: [compToolsDataMixin, drawViewDataMixin, dropMixin],
 		components: {
 			tabs,
 			tabPane,
-			cmsCustom
+			cmsCustom,
+			draggable
 		},
 		data() {
 			return {
@@ -196,281 +223,7 @@
 </style>
 
 <style lang="scss" scoped>
-    $header-height: 60px;
-    $container-border-color: #e0e0e0;
-
-    i.cms {
-        text-shadow: 0 0 1px #afafaf;
-    }
-
-    .draw-page {
-        height: 100%;
-        width: 100%;
-        font-family: PingFang-SC-Regular;
-    }
-
-    .draw-header {
-        top: 0;
-        left: 0;
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        position: absolute;
-        height: $header-height;
-        background-color: #fcfcfc;
-        box-shadow: 1px 1px 3px #dfdfdf;
-        > div {
-            height: 100%;
-            display: flex;
-            align-items: center;
-        }
-        i.cms {
-            font-size: 20px;
-            & + span {
-                font-size: 12px;
-            }
-        }
-    }
-
-    @mixin inner-icon($color,$textColor) {
-        .inner-icon-vertical {
-            &:not(:hover) {
-                i {
-                    color: $color;
-                }
-                span {
-                    color: $textColor;
-                }
-
-            }
-            i.cms {
-                &, & + span {
-                    display: block;
-                }
-            }
-        }
-    }
-
-    .header-logo {
-        display: flex;
-        width: 150px;
-        align-items: center;
-        padding-left: 30px;
-        img {
-            height: 30px;
-        }
-    }
-
-    .header-active {
-        width: 150px;
-        @include inner-icon(#494949, #494949);
-    }
-
-    .header-module, .header-scaling {
-        ul {
-            display: flex;
-            list-style: none;
-        }
-        li {
-            display: flex;
-            align-items: center;
-            padding-left: 5px;
-            padding-right: 5px;
-        }
-        @include inner-icon(rgba(0, 0, 0, 0.87), #828282);
-    }
-
-    .header-module {
-        flex-grow: 1;
-        justify-content: center;
-    }
-
-    .header-scaling {
-        padding-left: 20px;
-        padding-right: 40px;
-        li {
-            padding: 0;
-            &:nth-child(2) {
-                span {
-                    color: #888888;
-                    font-size: 13px;
-                }
-            }
-        }
-    }
-
-    .draw-body {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        background-color: #fafafa;
-        padding-top: $header-height;
-    }
-
-    .body-nav {
-        width: 60px;
-        user-select: none;
-        border-right: solid 1px $container-border-color;
-        li {
-            height: 60px;
-            display: flex;
-            cursor: pointer;
-            position: relative;
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-        }
-        i, span {
-            /*color: #002342;*/
-        }
-        i {
-            font-size: 28px;
-        }
-        span {
-            font-size: 12px;
-        }
-        li:hover, li.focus {
-            background-color: #1890ff;
-            i, span {
-                color: white;
-            }
-            &:after {
-                right: -1px;
-                top: 25px;
-                content: '';
-                position: absolute;
-                height: 0px;
-                width: 0px;
-                border-top: 6px solid transparent;
-                border-right: 6px solid white;
-                border-bottom: 6px solid transparent;
-            }
-        }
-
-        li:hover {
-            background-color: #a6b4cb;
-        }
-    }
-
-    .body-module {
-        width: 300px;
-        height: 100%;
-        position: relative;
-        border-right: solid 1px $container-border-color;
-        &:after {
-            top: 0;
-            right: -3px;
-            width: 6px;
-            height: 100%;
-            content: '';
-            z-index: 2;
-            position: absolute;
-            /*cursor: col-resize;*/
-            border-right: solid 1px transparent;
-        }
-    }
-
-    .module-class-toggle {
-
-    }
-
-    .module-list {
-        display: flex;
-        flex-wrap: wrap;
-        li {
-            width: 50%;
-            padding: 2px 5px;
-        }
-        .drop-origin {
-            width: 100%;
-            cursor: pointer;
-            &.move{
-                cursor: move;
-            }
-            >div{
-                color: gray;
-                font-size: 13px;
-            }
-            & >>> *{
-                pointer-events: none;
-            }
-
-        }
-    }
-
-    .module-search {
-        padding: 20px 10px;
-    }
-
-    .body-view {
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        justify-items: center;
-        justify-content: center;
-        background-color: #eeeeee;
-    }
-
-    .view-container {
-        width: 350px;
-        height: 720px;
-        display: flex;
-        align-items: center;
-        justify-items: center;
-        justify-content: center;
-        background-size: contain;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-image: url("~@img/draw/line-shell.png");
-    }
-
-    .view-draw-zone {
-        width: 306px;
-        height: 545px;
-        margin-top: 6px;
-        border: solid 1px #dadada;
-        background-color: white;
-    }
-
-    .body-action {
-        width: 40px;
-        border-left: solid 1px $container-border-color;
-        border-right: solid 1px $container-border-color;
-        li {
-            cursor: pointer;
-            padding-top: 10px;
-        }
-    }
-
-    .body-attributes {
-        width: 300px;
-        position: relative;
-        border-right: solid 1px $container-border-color;
-    }
-
-    $describe-height: 80px;
-    .select-draw-describe {
-        top: 0;
-        left: 0;
-        width: 100%;
-        position: absolute;
-        min-height: $describe-height;
-        p {
-            color: gray;
-            font-size: 13px;
-        }
-    }
-
-    .attributes-tab-toggle {
-        width: 100%;
-        height: 100%;
-        padding-top: $describe-height;
-        & > > > .el-tabs--border-card {
-            height: 100%;
-            box-shadow: none;
-            border-right: none;
-            border-left: none;
-        }
-    }
+    @import "_style/variable";
+    /*引入当前页面样式*/
+    @import './_style/index.scss';
 </style>

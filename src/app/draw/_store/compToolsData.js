@@ -31,14 +31,7 @@ const store = new Vuex.Store({
 					{
 						title: "全部",
 						compList: [
-							{
-								atomType: 'form',
-								atomId: 'input'
-							},
-							{
-								atomType: 'form',
-								atomId: 'input'
-							},
+						
 						]
 					},
 					{
@@ -68,21 +61,22 @@ const store = new Vuex.Store({
 						compList: []
 					},
 					{
-						title: "输入框",
+						title: "基本元素",
 						compList: []
 					},
 					{
-						title: "文本",
-						compList: []
+						title: "表单元素",
+						compList: [
+							{
+								atomType: 'form',
+								atomId: 'input'
+							},
+							{
+								atomType: 'form',
+								atomId: 'select'
+							},
+						]
 					},
-					{
-						title: "图形",
-						compList: []
-					},
-					{
-						title: "容器",
-						compList: []
-					}
 				]
 			}
 		],

@@ -1,10 +1,11 @@
-function getType(value){
-    if(isElement(value))return 'element';
-    var type = typeof (value);
-    if (type == 'object') {
-        type={}.toString.call(value).match(/object\s+(\w*)/)[1].toLocaleLowerCase()
-    }
-    return type;
+function getType(value) {
+	if (isElement(value)) return 'element';
+	var type = typeof (value);
+	if (type == 'object') {
+		type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
+		type = type[2] || type[1]
+	}
+	return type;
 };
 
 function isType(type) {

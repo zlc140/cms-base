@@ -9,6 +9,7 @@
 export default {
 	'input':{
 		tag: 'input',
+		name:'输入框',
 		data: {
 			style:{
 				height: '25px',
@@ -37,6 +38,9 @@ export default {
 				value: '',
 				placeholder:'下拉框'
 			},
-		}
+		},
+		child:[
+		
+		]
 	}
 }

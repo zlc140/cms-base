@@ -3,33 +3,59 @@
  */
 "use strict";
 
+function getType(value) {
+	var type = typeof (value);
+	if (type == 'object') {
+		type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
+		type = type[2] || type[1]
+	}
+	return type;
+};
+
 //把对象转换成json字符串
-var stringify = function (obj) {
-  var TmpArray = [];
-  for (var i in obj) {
-    obj[i] = typeof obj[i] === 'string' ? '"' + (obj[i].replace(/"/g, '\\"')) + '"' : (typeof obj[i] === 'object' ? stringify(obj[i]) : obj[i]);
-    TmpArray.push(i + ':' + obj[i]);
-  }
-  return '{' + TmpArray.join(',') + '}';
+function stringify(obj) {
+	
+	var type = getType(obj);
+	
+	switch (type) {
+		case 'null':
+			return JSON.stringify(obj);
+			break;
+		case 'function':
+			return obj.toString();
+			break;
+		case 'array':
+			return '[' + obj.map(stringify).join(',') + ']';
+			break;
+		default:
+			if (typeof obj === "object") {
+				return '{' + Object.keys(obj).map(function (key) {
+					return key + ':' + obj[key].replace(/"/g, '\\"');
+				}).join(',') + '}';
+			} else {
+				return JSON.stringify(obj);
+			}
+	}
+	
 };
 
 //把字符串解析成对象
 function parse(str) {
-  let json = str;
-  if (typeof (str) === 'object') {
-    return str;
-  } else {
-    try {
-      json = new Function("return " + str)();
-    }
-    catch (e) {
-      return str;
-    }
-    return json;
-  }
+	let json = str;
+	if (typeof (str) === 'object') {
+		return str;
+	} else {
+		try {
+			json = new Function("return " + str)();
+		}
+		catch (e) {
+			return str;
+		}
+		return json;
+	}
 }
 
 export default {
-  stringify: stringify,
-  parse: parse
+	stringify: stringify,
+	parse: parse
 };
