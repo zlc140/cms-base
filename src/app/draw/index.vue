@@ -168,14 +168,11 @@
                 </div>
                 <!-- 选择绘制组件的属性切换容器 -->
                 <div class="attributes-tab-toggle">
-                    <el-tabs :stretch="false" type="border-card" @tab-click="()=>{}" value="first">
-                        <el-tab-pane label="组件设置" name="first" class="attributes-setting">
+                    <el-tabs :stretch="false" type="border-card" @tab-click="()=>{}" value="style">
+                        <el-tab-pane label="样式设置" name="style" class="attributes-setting">
 
                             <h3>字体属性</h3>
                             <font-attr></font-attr>
-
-                            <h3>功能设置</h3>
-                            <event-attr></event-attr>
 
                             <h3>边框设置</h3>
                             <border-attr></border-attr>
@@ -185,7 +182,11 @@
 
                         </el-tab-pane>
 
-                        <el-tab-pane label="动画" name="second">
+                        <el-tab-pane label="功能设置" name="action" class="attributes-setting">
+                            <event-attr></event-attr>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="动画" name="animation">
                             动画
                         </el-tab-pane>
                     </el-tabs>
@@ -231,7 +232,7 @@
 		},
 		data() {
 			return {
-				moduleClass: 'first'
+				moduleClass: 'style'
 			}
 		},
 
