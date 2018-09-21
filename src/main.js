@@ -3,7 +3,7 @@ import App from './App.vue'
 
 // element ui 样式
 import 'element-ui/lib/theme-chalk/index.css';
-import {Form, Input, Tabs, TabPane} from 'element-ui';
+import {Form, Select, Switch, Option, Input, Tabs, TabPane, FormItem, Slider, ColorPicker,RadioGroup,Radio} from 'element-ui';
 
 // 路由插件
 import Router from '@plugins/router'
@@ -25,12 +25,17 @@ Vue.use(VueMaterial);
 
 // element ui组件安装
 Vue.use(Form);
-
 Vue.use(Input);
-
+Vue.use(Select);
+Vue.use(Switch);
+Vue.use(Option);
+Vue.use(FormItem);
 Vue.use(Tabs);
-
 Vue.use(TabPane);
+Vue.use(Slider);
+Vue.use(ColorPicker);
+Vue.use(Radio);
+Vue.use(RadioGroup);
 
 // 使用service插件
 Vue.use(Service);

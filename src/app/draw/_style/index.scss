@@ -172,11 +172,11 @@ i.cms {
 			color: gray;
 			font-size: 13px;
 		}
-		.drop-atom{
+		.drop-atom {
 			& > > > * {
 				pointer-events: none;
 			}
-			&.drop-move,&.sortable-chosen {
+			&.drop-move, &.sortable-chosen {
 				cursor: move;
 			}
 		}
@@ -254,15 +254,15 @@ i.cms {
 		//border-radius: 10px;
 	}
 	
-	.select-drop,.focus-drop {
+	.select-drop, .focus-drop, .drop-move, .sortable-chosen {
 		border: dashed 1px #ff1b1b;
 	}
 	
-	input,select{
+	input, select {
 		outline: none;
 	}
 	
-	.drop-move,.sortable-chosen {
+	.drop-move, .sortable-chosen {
 		cursor: move;
 	}
 }
@@ -318,8 +318,59 @@ i.cms {
 	padding-top: $describe-height;
 	& > > > .el-tabs--border-card {
 		height: 100%;
+		position:relative;
 		box-shadow: none;
 		border-right: none;
 		border-left: none;
+	}
+	.attributes-setting {
+		h3 {
+			margin: 0;
+			color: #7a96c5;
+			padding: 15px 0 5px 0;
+			font-weight: 500;
+			font-size: 14px;
+			border-bottom: solid 1px #d5d5d5;
+		}
+	}
+	.attributes-setting{
+		height:100%;
+		overflow-y: scroll;
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-bottom: 20px;
+		
+		$scroll-width: 5px;
+		
+		// 系统滚动条样式
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(143, 143, 143, 0.1);
+			border-radius: $scroll-width;
+			border: none;
+		}
+		
+		&::-webkit-scrollbar-track-piece {
+			background-color: #ffffff;
+			border: none;
+		}
+		
+		&::-webkit-scrollbar {
+			height: $scroll-width;
+			width: $scroll-width;
+			border: none;
+		}
+		
+		&::-webkit-scrollbar-track {
+			background-color: #e4e8ea;
+			border: none;
+			//border-radius: 10px;
+		}
+		
+		&:hover{
+			&::-webkit-scrollbar-thumb {
+				background-color: rgba(143, 143, 143, 0.43);
+				border-radius: $scroll-width;
+			}
+		}
 	}
 }

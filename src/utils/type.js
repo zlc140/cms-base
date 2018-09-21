@@ -1,11 +1,6 @@
 function getType(value) {
-	if (isElement(value)) return 'element';
-	var type = typeof (value);
-	if (type == 'object') {
-		type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
-		type = type[2] || type[1]
-	}
-	return type;
+	var type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
+	return type[2] || type[1];
 };
 
 function isType(type) {

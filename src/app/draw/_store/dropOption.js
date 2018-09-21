@@ -22,7 +22,7 @@ export default {
 				sort: false,
 				scroll: false,
 				animation: animation,
-				ghostClass:'drop-move',
+				ghostClass: 'drop-move',
 				draggable: '.drop-atom',                  // 关闭元素排序功能
 				fallbackOnBody: false,          // 将克隆的DOM元素追加到文档的主体中
 				forceFallback: true,           // boolean 如果设置为true时，将不使用原生的html5的拖放，可以修改一些拖放中元素的样式等
@@ -38,7 +38,7 @@ export default {
 				animation: animation,
 				draggable: '.drop-atom',
 				forceFallback: true,
-				chosenClass:'drop-move',
+				chosenClass: 'drop-move',
 				ghostClass: 'select-drop,drop-move'
 			},
 			// 回收站
@@ -59,31 +59,29 @@ export default {
 	methods: {
 		// 元素移入回收站 进行删除
 		removeDrop_Add(event) {
-			[].slice.call(event.to.children).forEach(function (node) {
-				node.classList.contains('no-drop') || event.to.removeChild(node)
-			})
-			
-			// 选中的元素切换
-			if(event.from.children.length > 1)event.from.lastChild.classList.add('focus-drop')
+			// 移除回收站中元素
+			event.to.removeChild(event.item)
+			// 移除数据容器中的组件
+			this.removeviewComp(event.item.getAttribute('comp-id'));
+			// 选择的组件id获取并设置当前组件选中状态
+			this.selectViewComp(event.from.lastChild.getAttribute('comp-id'));
 		},
 		// 中间绘制视图区域组件选中处理
-		viewCompChoose(event,) {
-			[].slice.call(event.from.children).forEach(function (node) {
-				node === event.item || node.classList.remove('focus-drop')
-			});
-			event.item.classList.add('focus-drop')
+		viewCompChoose(event) {
+			// 选择的组件id获取并设置当前组件选中状态
+			this.selectViewComp(event.item.getAttribute('comp-id'));
 		},
-		// 添加中间绘制区域组件
-		viewCompAdd(event) {
-			event.from = event.to;
-			this.viewCompChoose(event)
+		// 添加到绘制区域结束
+		viewCompAddEnd(event, comStruct) {
+			// 检查是否移动到绘制区域
+			if (event.from === event.to) return this.tempSelectViewComp(true);
+			// 移除插件创建的元素
+			event.to.removeChild(event.item)
+			// 调用绘制接口新增组件数据（实际是用vue来生产对应的组件）
+			this.addViewCompData(comStruct, event.newIndex - 1);
 		},
-		// 添加达到绘制区域结束
-		viewCompAddEnd(event, what){
-			console.log(event, what)
-		},
-		moveDrop(event){
-			console.log(event)
+		viewCompAddStart() {
+			this.tempSelectViewComp();
 		}
 	}
 }

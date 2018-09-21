@@ -102,18 +102,19 @@
                         <!-- 组件工具箱 -->
                         <ul class="module-list">
                             <li v-for="compInfo in item.compList">
-                                <draggable element="div" @move="moveDrop" @end="viewCompAddEnd($event,compInfo)"
-                                           @update="()=>{}"
-                                           :options="toolsDropOption"
-                                           class="drop-origin">
-                                    <div class="drop-atom">
+                                <div class="drop-origin">
+                                    <draggable element="div"
+                                               @start="viewCompAddStart"
+                                               @end="viewCompAddEnd($event,compInfo)"
+                                               @update="()=>{}"
+                                               :options="toolsDropOption">
                                         <!-- 自定义组件 -->
-                                        <cms-custom :struct="compInfo"></cms-custom>
-                                    </div>
+                                        <cms-custom :struct="compInfo" class="drop-atom" readonly></cms-custom>
+                                    </draggable>
                                     <div>
                                         <span>{{compInfo.name}}</span>
                                     </div>
-                                </draggable>
+                                </div>
                             </li>
                         </ul>
                     </tab-pane>
@@ -125,9 +126,12 @@
                     <!-- 绘制区域 -->
                     <draggable class="view-draw-zone" element="div"
                                :options="viewDropOption"
-                               @add="viewCompAdd"
                                @choose="viewCompChoose">
                         <div class="drop-atom"></div>
+                        <template v-for="compInfo in drawStructData">
+                            <cms-custom :key="compInfo.compId" :struct="compInfo" class="drop-atom"
+                                        :class="{'focus-drop':compInfo.compId === selectComp}"></cms-custom>
+                        </template>
                     </draggable>
                 </div>
             </div>
@@ -165,9 +169,22 @@
                 <!-- 选择绘制组件的属性切换容器 -->
                 <div class="attributes-tab-toggle">
                     <el-tabs :stretch="false" type="border-card" @tab-click="()=>{}" value="first">
-                        <el-tab-pane label="组件设置" name="first">
-                            组件设置
+                        <el-tab-pane label="组件设置" name="first" class="attributes-setting">
+
+                            <h3>字体属性</h3>
+                            <font-attr></font-attr>
+
+                            <h3>功能设置</h3>
+                            <event-attr></event-attr>
+
+                            <h3>边框设置</h3>
+                            <border-attr></border-attr>
+
+                            <h3>尺寸与位置设置</h3>
+                            <size-position-attr></size-position-attr>
+
                         </el-tab-pane>
+
                         <el-tab-pane label="动画" name="second">
                             动画
                         </el-tab-pane>
@@ -179,6 +196,7 @@
 </template>
 
 <script>
+	import SizePosition from "./_comp/attrs/sizePosition";
 	// 左侧组件tab选择
 	import tabs from './_comp/tabs';
 	import tabPane from './_comp/tab-pane';
@@ -195,13 +213,17 @@
 	// 绘制区域组件数据及接口
 	import {mixin as drawViewDataMixin} from './_store/drawViewData'
 
+	// 属性相关组件接口
+	import {mixin as attrsDataMixin} from './_store/attrs'
+
 	// 拖拽组件选项及配置
 	import dropMixin from './_store/dropOption'
 
 	export default {
 		name: 'index',
-		mixins: [compToolsDataMixin, drawViewDataMixin, dropMixin],
+		mixins: [compToolsDataMixin, drawViewDataMixin, attrsDataMixin, dropMixin],
 		components: {
+			SizePosition,
 			tabs,
 			tabPane,
 			cmsCustom,
@@ -216,14 +238,33 @@
 	}
 </script>
 
-<style>
-    .md-button {
+<style lang="scss">
+    /* 公共的按钮组件样式 */
+    .md-button:not(.md-icon-button) {
         min-width: 60px;
+    }
+
+    /* 最右侧的tabs容器 */
+    .attributes-tab-toggle {
+        position: relative;
+
+        .el-tabs__content {
+            height: 100%;
+            padding: 40px 0 0;
+            text-align: left;
+        }
+
+        .el-tabs__header {
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2;
+            position: absolute;
+        }
     }
 </style>
 
 <style lang="scss" scoped>
-    @import "_style/variable";
-    /*引入当前页面样式*/
+    /* 引入当前页面样式 */
     @import './_style/index.scss';
 </style>

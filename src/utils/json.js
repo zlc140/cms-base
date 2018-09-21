@@ -12,11 +12,9 @@ function getType(value) {
 	return type;
 };
 
-//把对象转换成json字符串
+//把对象转换成json字符串 (支持function)
 function stringify(obj) {
-	
 	var type = getType(obj);
-	
 	switch (type) {
 		case 'null':
 			return JSON.stringify(obj);
@@ -30,13 +28,12 @@ function stringify(obj) {
 		default:
 			if (typeof obj === "object") {
 				return '{' + Object.keys(obj).map(function (key) {
-					return key + ':' + obj[key].replace(/"/g, '\\"');
+					return '"'+key + '":' + stringify(obj[key]);
 				}).join(',') + '}';
 			} else {
 				return JSON.stringify(obj);
 			}
 	}
-	
 };
 
 //把字符串解析成对象
