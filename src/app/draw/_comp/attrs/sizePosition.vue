@@ -58,7 +58,7 @@
         <el-form-item label="旋转角度:">
             <el-slider
                     :min="0"
-                    :max="1000"
+                    :max="360"
                     v-model="sizePositionForm.angle"
                     show-input
                     input-size="mini">

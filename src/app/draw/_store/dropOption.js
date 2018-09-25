@@ -80,8 +80,9 @@ export default {
 			// 调用绘制接口新增组件数据（实际是用vue来生产对应的组件）
 			this.addViewCompData(comStruct, event.newIndex - 1);
 		},
+		// 添加绘制区域开始
 		viewCompAddStart() {
 			this.tempSelectViewComp();
-		}
+		},
 	}
 }

@@ -3,23 +3,85 @@
 	// 表单元素结构数据
 	import {getCompStruct} from '../_store/baseStruct';
 
-	function render(h, struct) {
-		// 检查是否已定义好的组件
-		struct = getCompStruct(struct)
+	// 获取本地json包
+	import Json from '@utils/json'
 
-		const data = Object.keys(struct.data || {}).reduce(function (data, key) {
-			data[key] = struct.data[key];
-			return data;
-		}, {});
+	// 拖拉拽组件
+	import draggable from 'vuedraggable'
+
+	// 绑定上下文
+	function contextBind(data, context) {
+		switch (typeof data) {
+			case 'object':
+				data = Object.keys(data).reduce(function (map, key) {
+					map[key] = contextBind(data[key], context);
+					return map;
+				}, {})
+				break;
+			case 'function':
+				data = data.bind(context);
+				break;
+		}
+
+		return data;
+	}
+
+	function forBind(context, data, value, index) {
+		switch (typeof data) {
+			case 'object':
+				data = Object.keys(data).reduce(function (map, key) {
+					const Value = forBind(context, data[key], value, index);
+					const Key = String(key).match(/for\s*=>\s*(\w+)/);
+
+					// 获得 属性值
+					let _value = Key ? Value(value, index) : Value;
+
+					if (Key) {
+						key = Key[1];
+						if (typeof _value === "function") {
+							_value = _value.bind(context);
+						}
+					}
+
+					map[key] = _value;
+					return map;
+				}, {})
+				break;
+			case 'function':
+				data = data.bind(context);
+				break;
+		}
+
+		return data;
+	}
+
+	function render(h, struct, context, count) {
+		if (typeof struct === 'string') return struct;
+
+		// 检查是否已定义好的组件
+		struct = getCompStruct(struct);
+
+		const data = struct.data || {};
 
 		// 给组件绑定上id
-        if(struct.compId){
-	        (data.attrs = data.attrs || {})['comp-id'] = struct.compId;
-        }
+		if (struct.compId) {
+			(data.attrs = data.attrs || {})['comp-id'] = struct.compId;
+		}
 
-		return h(struct.tag, JSON.parse(JSON.stringify(data)) || {}, (struct.child || struct.children || []).filter(struct => struct.tag).map(function (struct) {
-			return render(h, struct)
-		}))
+		// 检查是否启用for循环
+		let forData = typeof struct.for === "function" ? struct.for.bind(context)(struct.compId, ++count) : struct.for;
+		if (forData) {
+			return forData.map(function (value, index) {
+				return struct.text ? h(struct.tag, struct.text) : h(struct.tag, forBind(context, Json.parse(Json.stringify(data)), value, index) || {}, (struct.child || struct.children || []).filter(struct => typeof struct === 'string' || struct.tag).reduce(function (child, struct) {
+					return child.concat(render(h, struct, context, count))
+				}, []));
+			})
+		}
+
+		// 非for遍历
+		return struct.text ? h(struct.tag, struct.text) : h(struct.tag, contextBind(Json.parse(Json.stringify(data)), context) || {}, (struct.child || struct.children || []).filter(struct => typeof struct === 'string' || struct.tag).reduce(function (child, struct) {
+			return child.concat(render(h, struct, context, count))
+		}, []));
 	}
 
 	export default {
@@ -28,8 +90,14 @@
 			option: Object,
 			struct: Object,
 		},
+		components: {
+			draggable
+		},
 		render(h) {
-			if (this.struct) return render(h, this.struct)
+			if (this.struct) {
+				let nodes = render(h, this.struct, this, 0);
+				return nodes.length === 1 ? nodes[0] : nodes;
+			}
 		}
 	}
 </script>

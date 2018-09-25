@@ -77,6 +77,15 @@ const store = new Vuex.Store({
 							},
 						]
 					},
+					{
+						title:'容器',
+						compList: [
+							{
+								atomType: 'container',
+								atomId: 'div'
+							},
+						]
+					}
 				]
 			}
 		],

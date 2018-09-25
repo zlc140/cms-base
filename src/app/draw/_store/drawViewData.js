@@ -84,6 +84,12 @@ const mixin = {
 				return compInfo.compId === compId;
 			});
 			store.state.drawStructData.splice(index,1);
+		},
+		// 获取拖拽组件私有数据
+		getDraggable(dragId){
+			return {
+				list:[]
+			}
 		}
 	}
 }

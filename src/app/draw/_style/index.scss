@@ -171,6 +171,11 @@ i.cms {
 		> div {
 			color: gray;
 			font-size: 13px;
+			> div {
+				&:only-of-type, &.container {
+					border: solid 1px #cecece;
+				}
+			}
 		}
 		.drop-atom {
 			& > > > * {
@@ -318,7 +323,7 @@ i.cms {
 	padding-top: $describe-height;
 	& > > > .el-tabs--border-card {
 		height: 100%;
-		position:relative;
+		position: relative;
 		box-shadow: none;
 		border-right: none;
 		border-left: none;
@@ -333,8 +338,8 @@ i.cms {
 			border-bottom: solid 1px #d5d5d5;
 		}
 	}
-	.attributes-setting{
-		height:100%;
+	.attributes-setting {
+		height: 100%;
 		overflow-y: scroll;
 		padding-left: 10px;
 		padding-right: 10px;
@@ -366,7 +371,7 @@ i.cms {
 			//border-radius: 10px;
 		}
 		
-		&:hover{
+		&:hover {
 			&::-webkit-scrollbar-thumb {
 				background-color: rgba(143, 143, 143, 0.43);
 				border-radius: $scroll-width;

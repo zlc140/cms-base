@@ -1,6 +1,5 @@
 function getType(value) {
-	var type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
-	return type[2] || type[1];
+	return {}.toString.call(value).slice(8,-1).toLocaleLowerCase().replace(/html(body)?/,'');
 };
 
 function isType(type) {

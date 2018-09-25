@@ -9,9 +9,12 @@
 import Vue from 'vue'
 // 表单元素结构数据
 import formAtom from './formAtom';
+// 容器结构数据
+import container from './container';
 
 const atomCompMap = {
 	form: formAtom,
+	container,
 }
 
 // 获取组件结构
