@@ -38,6 +38,7 @@ export default {
 				animation: animation,
 				draggable: '.drop-atom',
 				forceFallback: true,
+				fallbackOnBody: false,          // 将克隆的DOM元素追加到文档的主体中
 				chosenClass: 'drop-move',
 				ghostClass: 'select-drop,drop-move'
 			},
@@ -53,6 +54,7 @@ export default {
 				filter: '.no-drop',
 				draggable: '.drop-atom',
 				forceFallback: true,
+				fallbackOnBody: false,          // 将克隆的DOM元素追加到文档的主体中
 			}
 		}
 	},
@@ -76,9 +78,9 @@ export default {
 			// 检查是否移动到绘制区域
 			if (event.from === event.to) return this.tempSelectViewComp(true);
 			// 移除插件创建的元素
-			event.to.removeChild(event.item)
+			event.to.removeChild(event.item);
 			// 调用绘制接口新增组件数据（实际是用vue来生产对应的组件）
-			this.addViewCompData(comStruct, event.newIndex - 1);
+			this.addViewCompData(comStruct, event.newIndex - 1,event.to.getAttribute('draggable-id'));
 		},
 		// 添加绘制区域开始
 		viewCompAddStart() {

@@ -126,6 +126,7 @@
                     <!-- 绘制区域 -->
                     <draggable class="view-draw-zone" element="div"
                                :options="viewDropOption"
+                               draggable-id="0"
                                @choose="viewCompChoose">
                         <div class="drop-atom"></div>
                         <template v-for="compInfo in drawStructData">
@@ -263,6 +264,66 @@
             position: absolute;
         }
     }
+
+
+    .view-draw-zone {
+        width: 306px;
+        height: 545px;
+        margin-top: 6px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border: solid 1px #dadada;
+        background-color: white;
+
+        $scroll-width: 5px;
+        // 系统滚动条样式
+        &::-webkit-scrollbar-thumb {
+            //background-color: rgba(193, 193, 193, 0.76);
+            background-color: rgba(3, 3, 3, 0.43);
+            border-radius: $scroll-width;
+            border: none;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(193, 193, 193, 0.76);
+            border-radius: $scroll-width;
+        }
+
+        &::-webkit-scrollbar-thumb:active {
+            background-color: rgba(171, 171, 171, 0.92);
+            border-radius: $scroll-width;
+        }
+
+        &::-webkit-scrollbar-track-piece {
+            background-color: #ffffff;
+            border: none;
+        }
+
+        &::-webkit-scrollbar {
+            height: $scroll-width;
+            width: $scroll-width;
+            border: none;
+        }
+
+        &::-webkit-scrollbar-track {
+            background-color: #e4e8ea;
+            border: none;
+            //border-radius: 10px;
+        }
+
+        .select-drop, .focus-drop, .drop-move, .sortable-chosen {
+            border: dashed 1px #ff1b1b;
+        }
+
+        input, select {
+            outline: none;
+        }
+
+        .drop-move, .sortable-chosen {
+            cursor: move;
+        }
+    }
+
 </style>
 
 <style lang="scss" scoped>

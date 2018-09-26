@@ -6,13 +6,15 @@
  * MIT License http://www.opensource.org/licenses/mit-license.php
  */
 
+import {store as viewStore,comAPI} from '../drawViewData.js'
+
 export default {
 	'div': {
 		tag: 'div',
 		name: '普通容器',
 		data: {
 			style: {
-				height: '200px',
+				minHeight: '100px',
 				width: '100%',
 			},
 			domProps: {},
@@ -31,7 +33,7 @@ export default {
 				tag: 'draggable',
 				data: {
 					style: {
-						height: '100px',
+						minHeight: '100px',
 						width: '100%',
 					},
 					// 组件 props
@@ -53,8 +55,8 @@ export default {
 					},
 					on: {
 						choose(event) {
-							console.log('----',this.struct,this)
-							// this.viewCompChoose(event)
+							console.log('----',event.from.lastChild.getAttribute('comp-id'),viewStore)
+							// viewStore.state.selectComp = Number(event.from.lastChild.getAttribute('comp-id'));
 						},
 					},
 				},
@@ -66,37 +68,16 @@ export default {
 								"drop-atom": true
 							},
 							style: {
-								height: '20px',
+								height: '1px',
 								width: '100%',
-								border: 'solid 1px pink'
+								border: '1px solid #f0f0f0'
 							},
 						},
-						child: [
-							'div1',
-						]
 					},
 					{
 						tag: 'cms-custom',
-						for: function (identify) {
-							return [{
-								tag: 'input',
-								name:'输入框',
-								data: {
-									style:{
-										height: '25px',
-										width: '100%',
-									},
-									domProps: {
-										value: '',
-										placeholder:'输入框'
-									},
-									on: {
-										input(e) {
-											console.log(e)
-										}
-									}
-								},
-							}]||this.getDraggable(identify).list;
+						for: function (draggableId) {
+							return comAPI.getDraggableList(draggableId).list;
 						},
 						data: {
 							style: {},
@@ -105,12 +86,12 @@ export default {
 								"for=>key": function (value, index) {
 									return index;
 								},
-								"for=>struct": function (value,ss) {
-									console.log(':::',ss)
+								"for=>struct": function (value) {
 									return value;
 								}
 							},
 							class: {
+								"drop-atom": true,
 								'for=>focus-drop': function (value) {
 									return value.compId === this.selectComp;
 								},

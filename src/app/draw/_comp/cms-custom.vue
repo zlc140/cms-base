@@ -7,7 +7,7 @@
 	import Json from '@utils/json'
 
 	// 拖拉拽组件
-	import draggable from 'vuedraggable'
+	import draggable from 'vuedraggable';
 
 	// 绑定上下文
 	function contextBind(data, context) {
@@ -68,8 +68,15 @@
 			(data.attrs = data.attrs || {})['comp-id'] = struct.compId;
 		}
 
+		// 检查是否draggable组件
+		if (struct.tag === 'draggable') {
+			++count;
+			// 添加拖拽组件的id标识
+			(data.attrs = data.attrs || {})['draggable-id'] = context.struct.compId + '_' + count;
+		}
+
 		// 检查是否启用for循环
-		let forData = typeof struct.for === "function" ? struct.for.bind(context)(struct.compId, ++count) : struct.for;
+		let forData = typeof struct.for === "function" ? struct.for.bind(context)(context.struct.compId + '_' +count) : struct.for;
 		if (forData) {
 			return forData.map(function (value, index) {
 				return struct.text ? h(struct.tag, struct.text) : h(struct.tag, forBind(context, Json.parse(Json.stringify(data)), value, index) || {}, (struct.child || struct.children || []).filter(struct => typeof struct === 'string' || struct.tag).reduce(function (child, struct) {

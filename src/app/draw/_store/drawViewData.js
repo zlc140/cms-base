@@ -10,10 +10,12 @@ import Vuex from 'vuex'
 // 表单元素结构数据
 import {getCompStruct} from '../_store/baseStruct';
 
-let compId = 0;
-
 const store = new Vuex.Store({
 	state: {
+		// 组件标识id
+		compId : 0,
+		// 拖拉组件Id标识
+		draggableId: 0,
 		// 已选的组件
 		selectComp: null,
 		// 上一次已选组件
@@ -26,6 +28,10 @@ const store = new Vuex.Store({
 		history: [],
 		// 历史撤销记录
 		reHistory: [],
+		// 不同层级的绘制容器的数据存储
+		draggableIdLevelData: {
+			0: []
+		}
 	},
 	getters: {
 		// 已选的组件
@@ -40,27 +46,50 @@ const store = new Vuex.Store({
 	mutations: {}
 })
 
+const comAPI = {
+	// 获取拖拽容器里所有组件私有数据
+	getDraggableList(draggableId) {
+		return {
+			list: store.state.draggableIdLevelData[draggableId] || []
+		}
+	},
+	// 视图组件选择
+	selectViewComp(compId) {
+		store.state.selectComp = Number(compId);
+	},
+}
+
 const mixin = {
+	data() {
+		draggableId:0
+	},
+	berforUpdate(){
+		console.log('update...')
+	},
 	computed: {
 		selectComp() {
 			return store.getters.selectComp;
 		},
 		drawStructData() {
-			return store.getters.drawStructData;
+			return store.state.draggableIdLevelData[0] = store.state.draggableIdLevelData[0] || [];
 		}
 	},
 	methods: {
 		// 新增组件数据
-		addViewCompData(compStruct, index) {
+		addViewCompData(compStruct, index, draggableId) {
 			// 检查是否已定义好的组件
 			compStruct = toNormalData(getCompStruct(compStruct))
-			compId = compStruct.compId = ++compId;
+			compStruct.compId = ++store.state.compId;
 			// 记录当前新增的组件
-			store.state.viewCompMap[compId] = compStruct;
+			store.state.viewCompMap[store.state.compId] = compStruct;
 			// 更改已选择的组件
-			store.state.selectComp = compId;
+			store.state.selectComp = store.state.compId;
 			// 写入绘制区域
-			store.state.drawStructData.splice(index, 0, compStruct)
+			if(!store.state.draggableIdLevelData[draggableId]){
+				// 触发虚拟dom更新
+				this.$set(store.state.draggableIdLevelData,draggableId,[])
+			}
+			store.state.draggableIdLevelData[draggableId].splice(index, 0, compStruct);
 		},
 		// 临时组件选择 （用于新增时候不确定是否添加）
 		tempSelectViewComp(isReset) {
@@ -83,14 +112,8 @@ const mixin = {
 			const index = store.state.drawStructData.findIndex(function (compInfo) {
 				return compInfo.compId === compId;
 			});
-			store.state.drawStructData.splice(index,1);
+			store.state.drawStructData.splice(index, 1);
 		},
-		// 获取拖拽组件私有数据
-		getDraggable(dragId){
-			return {
-				list:[]
-			}
-		}
 	}
 }
 
@@ -171,17 +194,13 @@ function actionHandle(history, isRecord) {
 // 绘制区域数据接口
 export {
 	store,
-	mixin
+	mixin,
+	comAPI
 }
 
 
 function getType(value) {
-	var type = typeof (value);
-	if (type == 'object') {
-		type = {}.toString.call(value).toLocaleLowerCase().match(/object\s+(html\w+?(element)|(\w+))/);
-		type = type[2] || type[1]
-	}
-	return type;
+	return {}.toString.call(value).slice(8,-1).toLocaleLowerCase().replace(/html(body)?/,'');
 };
 
 
