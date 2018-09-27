@@ -7,13 +7,17 @@
  */
 
 import Vuex from 'vuex'
+
+// 获取本地json包
+// import Json from '@utils/json'
+
 // 表单元素结构数据
 import {getCompStruct} from '../_store/baseStruct';
 
 const store = new Vuex.Store({
 	state: {
 		// 组件标识id
-		compId : 0,
+		compId: 0,
 		// 拖拉组件Id标识
 		draggableId: 0,
 		// 已选的组件
@@ -57,14 +61,15 @@ const comAPI = {
 	selectViewComp(compId) {
 		store.state.selectComp = Number(compId);
 	},
+	// 获取当前页面绘制数据
+	getPageDrawData() {
+		return getNormalDrawData(store.state.draggableIdLevelData[0]);
+	}
 }
 
 const mixin = {
 	data() {
 		draggableId:0
-	},
-	berforUpdate(){
-		console.log('update...')
 	},
 	computed: {
 		selectComp() {
@@ -85,9 +90,9 @@ const mixin = {
 			// 更改已选择的组件
 			store.state.selectComp = store.state.compId;
 			// 写入绘制区域
-			if(!store.state.draggableIdLevelData[draggableId]){
+			if (!store.state.draggableIdLevelData[draggableId]) {
 				// 触发虚拟dom更新
-				this.$set(store.state.draggableIdLevelData,draggableId,[])
+				this.$set(store.state.draggableIdLevelData, draggableId, [])
 			}
 			store.state.draggableIdLevelData[draggableId].splice(index, 0, compStruct);
 		},
@@ -106,7 +111,7 @@ const mixin = {
 			store.state.selectComp = Number(compId);
 		},
 		// 移除绘制区域的组件
-		removeviewComp(compId,draggableId) {
+		removeviewComp(compId, draggableId) {
 			compId = Number(compId);
 			delete store.state.viewCompMap[compId];
 			const index = store.state.draggableIdLevelData[draggableId].findIndex(function (compInfo) {
@@ -114,6 +119,10 @@ const mixin = {
 			});
 			store.state.draggableIdLevelData[draggableId].splice(index, 1);
 		},
+		// 保存当前页面绘制数据
+		saveDrawData() {
+			console.log(comAPI.getPageDrawData());
+		}
 	}
 }
 
@@ -162,7 +171,7 @@ function actionHandle(history, isRecord) {
 	
 	// 检查是否历史回退
 	if (!isRecord) {
-	
+		
 	}
 	
 	
@@ -200,7 +209,7 @@ export {
 
 
 function getType(value) {
-	return {}.toString.call(value).slice(8,-1).toLocaleLowerCase().replace(/html(body)?/,'');
+	return {}.toString.call(value).slice(8, -1).toLocaleLowerCase().replace(/html(body)?/, '');
 };
 
 
@@ -215,9 +224,45 @@ function toNormalData(compStruct) {
 				return Object.keys(compStruct).reduce(function (map, key) {
 					map[key] = toNormalData(compStruct[key])
 					return map;
-				}, {})
+				}, Array.isArray(compStruct) ? [] : {})
 			} else {
 				return compStruct;
 			}
 	}
+}
+
+// 递归处理绘制的数据
+function getNormalDrawData(child) {
+	
+	return child.map(function (compData) {
+		if (typeof compData === 'string') return compData;
+		
+		// 转换成正常数据
+		compData = toNormalData(compData);
+		
+		const data = compData.data;
+		
+		// 检查组件标签
+		switch (compData.tag) {
+			// 检查是否拖拽组件
+			case 'draggable':
+				let draggableId = data.attrs['draggable-id'];
+				// 获取此组件下真实子节点数据
+				compData.child = store.state.draggableIdLevelData[draggableId];
+				compData.tag = data.props.element;
+				
+				// 对无用数据进行删除
+				delete data.props.element;
+				delete data.props.options;
+				delete data.on['choose'];
+				delete data.attrs['draggable-id'];
+				break;
+		}
+		
+		// 递归处理
+		if (Array.isArray(compData.child)) {
+			compData.child = getNormalDrawData(compData.child);
+		}
+		return compData;
+	})
 }

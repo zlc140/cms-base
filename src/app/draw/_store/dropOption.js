@@ -24,21 +24,21 @@ export default {
 				animation: animation,
 				ghostClass: 'drop-move',
 				draggable: '.drop-atom',                  // 关闭元素排序功能
-				fallbackOnBody: false,          // 将克隆的DOM元素追加到文档的主体中
+				// fallbackOnBody: false,          // 将克隆的DOM元素追加到文档的主体中
 				forceFallback: true,           // boolean 如果设置为true时，将不使用原生的html5的拖放，可以修改一些拖放中元素的样式等
 			},
 			// 视图中拖拽组件选项
 			viewDropOption: {
 				group: {
 					name: 'one',
-					revertClone: false,
+					// revertClone: false,
 				},
 				sort: true,
 				scroll: false,
 				animation: animation,
 				draggable: '.drop-atom',
 				forceFallback: true,
-				fallbackOnBody: false,          // 将克隆的DOM元素追加到文档的主体中
+				// fallbackOnBody: false,          // 将克隆的DOM元素追加到文档的主体中
 				chosenClass: 'drop-move',
 				ghostClass: 'select-drop,drop-move'
 			},

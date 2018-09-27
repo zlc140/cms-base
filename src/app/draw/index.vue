@@ -70,7 +70,7 @@
             <!-- 发布操作 -->
             <div class="header-put">
                 <md-button class="md-raised md-dense md-primary">预览及设置</md-button>
-                <md-button class="md-raised md-dense md-primary">保存</md-button>
+                <md-button class="md-raised md-dense md-primary" @click="saveDrawData">保存</md-button>
                 <md-button class="md-raised md-dense md-primary">发布</md-button>
                 <md-button class="md-raised md-dense md-accent">退出</md-button>
             </div>
@@ -92,7 +92,6 @@
                     <el-input
                             size="small"
                             placeholder="请输入内容"
-                            :value="selectComp"
                             suffix-icon="el-icon-search">
                     </el-input>
                 </div>
@@ -311,10 +310,14 @@
             border: none;
             //border-radius: 10px;
         }
+        .drop-atom{
+            /*border:solid 1px transparent;*/
+        }
 
         .select-drop, .focus-drop, .drop-move, .sortable-chosen {
             border: dashed 1px #ff1b1b;
         }
+
 
         input, select {
             outline: none;
@@ -325,7 +328,7 @@
         }
         [draggable-id]{
             background-color: #fcfcf5;
-            border: dotted 1px #e2c82e;
+            /*border: dotted 1px #e2c82e;*/
         }
     }
 

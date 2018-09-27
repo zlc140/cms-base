@@ -13,7 +13,7 @@
 				data = Object.keys(data).reduce(function (map, key) {
 					map[key] = cloneData(data[key]);
 					return map;
-				}, {})
+				}, Array.isArray(data) ? [] : {})
 				break;
 		}
 		return data;
@@ -26,7 +26,7 @@
 				data = Object.keys(data).reduce(function (map, key) {
 					map[key] = contextBind(data[key], context);
 					return map;
-				}, {})
+				}, Array.isArray(data) ? [] : {})
 				break;
 			case 'function':
 				data = data.bind(context);
@@ -36,6 +36,7 @@
 		return data;
 	}
 
+	// 支持并绑定for循环
 	function forBind(context, data, value, index) {
 		switch (typeof data) {
 			case 'object':
