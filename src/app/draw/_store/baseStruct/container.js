@@ -55,8 +55,7 @@ export default {
 					},
 					on: {
 						choose(event) {
-							console.log('----',event.from.lastChild.getAttribute('comp-id'),viewStore)
-							// viewStore.state.selectComp = Number(event.from.lastChild.getAttribute('comp-id'));
+							comAPI.selectViewComp(event.item.getAttribute('comp-id'));
 						},
 					},
 				},
@@ -68,9 +67,9 @@ export default {
 								"drop-atom": true
 							},
 							style: {
-								height: '1px',
+								// height: '1px',
 								width: '100%',
-								border: '1px solid #f0f0f0'
+								// border: '1px solid #f0f0f0'
 							},
 						},
 					},
@@ -93,7 +92,7 @@ export default {
 							class: {
 								"drop-atom": true,
 								'for=>focus-drop': function (value) {
-									return value.compId === this.selectComp;
+									return value.compId === viewStore.state.selectComp;
 								},
 							}
 						},

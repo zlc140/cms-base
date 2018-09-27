@@ -106,13 +106,13 @@ const mixin = {
 			store.state.selectComp = Number(compId);
 		},
 		// 移除绘制区域的组件
-		removeviewComp(compId) {
+		removeviewComp(compId,draggableId) {
 			compId = Number(compId);
 			delete store.state.viewCompMap[compId];
-			const index = store.state.drawStructData.findIndex(function (compInfo) {
+			const index = store.state.draggableIdLevelData[draggableId].findIndex(function (compInfo) {
 				return compInfo.compId === compId;
 			});
-			store.state.drawStructData.splice(index, 1);
+			store.state.draggableIdLevelData[draggableId].splice(index, 1);
 		},
 	}
 }

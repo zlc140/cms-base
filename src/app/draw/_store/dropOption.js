@@ -64,7 +64,7 @@ export default {
 			// 移除回收站中元素
 			event.to.removeChild(event.item)
 			// 移除数据容器中的组件
-			this.removeviewComp(event.item.getAttribute('comp-id'));
+			this.removeviewComp(event.item.getAttribute('comp-id'),event.from.getAttribute('draggable-id'));
 			// 选择的组件id获取并设置当前组件选中状态
 			this.selectViewComp(event.from.lastChild.getAttribute('comp-id'));
 		},

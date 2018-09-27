@@ -92,6 +92,7 @@
                     <el-input
                             size="small"
                             placeholder="请输入内容"
+                            :value="selectComp"
                             suffix-icon="el-icon-search">
                     </el-input>
                 </div>
@@ -321,6 +322,10 @@
 
         .drop-move, .sortable-chosen {
             cursor: move;
+        }
+        [draggable-id]{
+            background-color: #fcfcf5;
+            border: dotted 1px #e2c82e;
         }
     }
 
