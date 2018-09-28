@@ -78,13 +78,22 @@ export default {
 						for: function (draggableId) {
 							return comAPI.getDraggableList(draggableId).list;
 						},
+						"for=>key": function (value) {
+							console.log(value.compId)
+							return value.compId;
+						},
+						attrs:{
+							"for=>key": function (value) {
+								return value.compId;
+							},
+						},
 						data: {
 							style: {},
+							"for=>key": function (value) {
+								return value.compId;
+							},
 							// 组件 props
 							props: {
-								"for=>key": function (value, index) {
-									return index;
-								},
 								"for=>struct": function (value) {
 									return value;
 								}

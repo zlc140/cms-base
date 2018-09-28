@@ -64,6 +64,11 @@ const comAPI = {
 	// 获取当前页面绘制数据
 	getPageDrawData() {
 		return getNormalDrawData(store.state.draggableIdLevelData[0]);
+	},
+	// 转换页面绘制信息为组件、模板 数据（以便重复使用）
+	pageDrawToCompData() {
+		console.log(store.state.draggableIdLevelData)
+		return pageDrawToCompData(store.state.draggableIdLevelData[0]);
 	}
 }
 
@@ -122,6 +127,10 @@ const mixin = {
 		// 保存当前页面绘制数据
 		saveDrawData() {
 			console.log(comAPI.getPageDrawData());
+		},
+		// 保存当前页面绘制为组件
+		saveDrawToCompData() {
+			console.log(comAPI.pageDrawToCompData());
 		}
 	}
 }
@@ -263,6 +272,21 @@ function getNormalDrawData(child) {
 		if (Array.isArray(compData.child)) {
 			compData.child = getNormalDrawData(compData.child);
 		}
+		return compData;
+	})
+}
+
+// 转换页面绘制信息为组件、模板 数据（以便重复使用）
+// 重新构建组件结构数据  组件 compId  拖拽id=》 内部对应的组件list  ( 递归处理、另外拖拽id需重新生成、也需要给予组件复合标识 )
+
+function pageDrawToCompData(child) {
+	return child.map(function (compData) {
+		if (typeof compData === 'string') return compData;
+		
+		// 转换成正常数据
+		compData = toNormalData(compData);
+		
+		const data = compData.data;
 		return compData;
 	})
 }

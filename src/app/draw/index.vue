@@ -70,8 +70,8 @@
             <!-- 发布操作 -->
             <div class="header-put">
                 <md-button class="md-raised md-dense md-primary">预览及设置</md-button>
-                <md-button class="md-raised md-dense md-primary" @click="saveDrawData">保存</md-button>
-                <md-button class="md-raised md-dense md-primary">发布</md-button>
+                <md-button class="md-raised md-dense md-primary" @click="saveDrawToCompData">保存</md-button>
+                <md-button class="md-raised md-dense md-primary" @click="saveDrawData">发布</md-button>
                 <md-button class="md-raised md-dense md-accent">退出</md-button>
             </div>
         </div>
