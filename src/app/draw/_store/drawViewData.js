@@ -131,6 +131,7 @@ const mixin = {
 		// 保存当前页面绘制为组件
 		saveDrawToCompData() {
 			console.log(comAPI.pageDrawToCompData());
+			console.log(store.state.draggableIdLevelData);
 		}
 	}
 }
@@ -276,17 +277,43 @@ function getNormalDrawData(child) {
 	})
 }
 
+// 转换页面构建的数据为输出的配置
 // 转换页面绘制信息为组件、模板 数据（以便重复使用）
 // 重新构建组件结构数据  组件 compId  拖拽id=》 内部对应的组件list  ( 递归处理、另外拖拽id需重新生成、也需要给予组件复合标识 )
 
 function pageDrawToCompData(child) {
-	return child.map(function (compData) {
+	let structInfo={};
+	
+	return child.reduce(function (compStructChild,compData) {
 		if (typeof compData === 'string') return compData;
 		
 		// 转换成正常数据
 		compData = toNormalData(compData);
 		
 		const data = compData.data;
-		return compData;
-	})
+		
+		// 检查组件标签
+		switch (compData.tag) {
+			// 检查是否拖拽组件
+			case 'draggable':
+				let draggableId = data.attrs['draggable-id'];
+				// 获取此组件下真实子节点数据
+				compData.child = store.state.draggableIdLevelData[draggableId];
+				compData.tag = data.props.element;
+				
+				// 对无用数据进行删除
+				delete data.props.element;
+				delete data.props.options;
+				delete data.on['choose'];
+				delete data.attrs['draggable-id'];
+				break;
+		}
+		
+		// 递归处理
+		if (Array.isArray(compData.child)) {
+			compData.child = getNormalDrawData(compData.child);
+		}
+		
+		return compStruct;
+	},[])
 }
