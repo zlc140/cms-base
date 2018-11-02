@@ -1,4 +1,4 @@
-# lovego-cms
+# lovego-cms (自定义移动端界面)
 
 ## Project setup
 ```
